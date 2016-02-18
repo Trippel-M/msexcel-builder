@@ -120,8 +120,14 @@ class Sheet
     @row_ht = {}
     @styles = {}
 
-  set: (col, row, str) ->
-    @data[row][col].v = @book.ss.str2id(''+str) if str? and str isnt ''
+  set: (col, row, value) ->
+    if value? and value isnt ''
+      if typeof value == 'number'
+        @data[row][col].dataType = 'number'
+        @data[row][col].v = value
+      else
+        @data[row][col].dataType = 'string'
+        @data[row][col].v = @book.ss.str2id(''+value)
 
   merge: (from_cell, to_cell) ->
     @merges.push({from:from_cell, to:to_cell})
@@ -183,7 +189,9 @@ class Sheet
         if (ix.v isnt 0) or (sid isnt 1)
           c = r.ele('c',{r:''+tool.i2a(j)+i})
           c.att('s',''+(sid-1)) if sid isnt 1
-          if ix.v isnt 0
+          if ix.dataType == 'number'
+            c.ele('v',''+ix.v)
+          else
             c.att('t','s')
             c.ele('v',''+(ix.v-1))
     if @merges.length > 0
