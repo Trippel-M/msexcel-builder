@@ -348,6 +348,10 @@ class Workbook
     @sheets.push sheet
     return sheet
 
+  toBuffer: (cb) =>
+    @generate (err, zip) ->
+      cb err, zip.generate(type: 'nodebuffer')
+
   save: (cb) =>
     target = @fpath + '/' + @fname
     @generate (err, zip) ->
